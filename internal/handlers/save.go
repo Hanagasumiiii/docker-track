@@ -6,18 +6,13 @@ import (
 	"net/http"
 )
 
-type Request struct {
-	Ip     string `json:"ip"`
-	Status string `json:"status"`
-}
-
 type ContainerSaver interface {
 	SaveContainer(container models.Container) error
 }
 
-func New(saver ContainerSaver) http.HandlerFunc {
+func Add(saver ContainerSaver) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		const op = "handlers.save"
+		//const op = "handlers.save"
 
 		var container models.Container
 		if err := json.NewDecoder(r.Body).Decode(&container); err != nil {

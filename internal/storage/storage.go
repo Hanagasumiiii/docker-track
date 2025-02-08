@@ -41,9 +41,11 @@ func Connect(path string) (*Storage, error) {
 func (s *Storage) SaveContainer(container models.Container) error {
 	const op = "storage.SaveContainer"
 
+	// TODO check on repeat
+
 	stmt, err := s.DB.Prepare(`
 	INSERT INTO containers (ip, status) 
-	VALUES (?, ?)
+	VALUES ($1, $2)
 	`)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
@@ -88,4 +90,21 @@ func (s *Storage) GetContainers() ([]models.Container, error) {
 	}
 
 	return containers, nil
+}
+
+func (s *Storage) DeleteContainer(ip string) error {
+	const op = "storage.DeleteContainer"
+
+	stmt, err := s.DB.Prepare(`
+	DELETE from containers WHERE ip = $1
+	`)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	_, err = stmt.Exec(ip)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return nil
 }

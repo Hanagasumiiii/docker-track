@@ -1,8 +1,11 @@
 package main
 
 import (
+	"docker-track/internal/handlers"
 	"docker-track/internal/storage"
 	"fmt"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -16,9 +19,12 @@ func main() {
 		fmt.Println("DONE")
 	}
 
-	err = s.SaveContainer("192.168.11.11", "in work")
-	if err != nil {
-		panic(err)
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/containers", handlers.Add(s))
+
+	if err = http.ListenAndServe(":8080", mux); err != nil {
+		log.Fatal(err)
 	}
 
 	// TODO: init router: http.ServeMux
