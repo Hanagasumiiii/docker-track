@@ -22,5 +22,4 @@ func Get(getter ContainerGetter) http.HandlerFunc {
 			return
 		}
 	}
-
 }
