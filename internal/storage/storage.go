@@ -2,9 +2,9 @@ package storage
 
 import (
 	"database/sql"
-	"docker-track/internal/models"
 	"errors"
 	"fmt"
+	"github.com/Hanagasumiiii/docker-track/internal/models"
 	_ "github.com/lib/pq"
 )
 

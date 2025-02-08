@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
-	"docker-track/internal/models"
 	"encoding/json"
 	"fmt"
+	"github.com/Hanagasumiiii/docker-track/internal/models"
 	"github.com/go-ping/ping"
 	"log"
 	"net/http"

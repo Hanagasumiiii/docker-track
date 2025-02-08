@@ -1,9 +1,9 @@
 package main
 
 import (
-	"docker-track/internal/handlers"
-	"docker-track/internal/storage"
 	"fmt"
+	"github.com/Hanagasumiiii/docker-track/internal/handlers"
+	"github.com/Hanagasumiiii/docker-track/internal/storage"
 	"log"
 	"net/http"
 )

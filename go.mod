@@ -1,4 +1,4 @@
-module docker-track
+module github.com/Hanagasumiiii/docker-track
 
 go 1.23
 

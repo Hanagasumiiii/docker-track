@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"docker-track/internal/models"
 	"encoding/json"
+	"github.com/Hanagasumiiii/docker-track/internal/models"
 	"net/http"
 )
 
