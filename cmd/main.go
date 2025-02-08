@@ -21,7 +21,9 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/containers", handlers.Add(s))
+	mux.HandleFunc("/containers/add", handlers.Add(s))
+	mux.HandleFunc("/containers/delete", handlers.Delete(s))
+	mux.HandleFunc("/containers/get", handlers.Get(s))
 
 	if err = http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatal(err)
