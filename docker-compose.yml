@@ -1,5 +1,5 @@
 services:
-  database:
+  postgres:
     image: postgres:latest
     restart: unless-stopped
     environment:
@@ -8,3 +8,51 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
+    networks:
+      - app_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  container_api:
+    build:
+      dockerfile: cmd/container_api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://q:q@postgres:5432/q?sslmode=disable
+    ports:
+      - "8081:8081"
+    networks:
+      - app_network
+
+  frontend:
+    build:
+      context: ./container-monitor
+    depends_on:
+      - container_api
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+
+  pinger:
+    build:
+      dockerfile: cmd/pinger/Dockerfile
+    depends_on:
+      - container_api
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  curl_container:
+    image: curlimages/curl:latest
+    networks:
+      - app_network
+    entrypoint: [ "sleep", "infinity" ]
+
+networks:
+  app_network:

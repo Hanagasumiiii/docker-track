@@ -12,7 +12,7 @@ import (
 )
 
 func getContainersFromAPI() ([]models.Container, error) {
-	url := "http://localhost:8080/containers/get"
+	url := "http://container_api:8081/containers/get"
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -45,13 +45,10 @@ func pingContainer(ip string) (string, error) {
 	return pinger.Statistics().AvgRtt.String(), nil
 }
 
-func sendDataToFrontend(containers models.Container) error {
-	url := "http://frontend-api/containers" // API frontend для получения данных
+func updateContainerStatus(container models.Container) error {
+	url := "http://container_api:8081/containers/update"
 
-	data, err := json.Marshal(containers)
-
-	fmt.Println(data)
-
+	data, err := json.Marshal(container)
 	if err != nil {
 		return fmt.Errorf("failed to marshal data: %v", err)
 	}
@@ -77,7 +74,7 @@ func sendDataToFrontend(containers models.Container) error {
 }
 
 func main() {
-	ticker := time.NewTicker(1 * time.Minute)
+	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
 	for {
@@ -90,20 +87,19 @@ func main() {
 			}
 
 			for _, container := range containers {
-				// TODO after PingTime down
-				_, err := pingContainer(container.Ip)
+				_, err = pingContainer(container.Ip)
 				if err != nil {
 					log.Printf("Failed to ping container %s: %v", container.Ip, err)
-					continue
+					container.Status = "inactive"
+				} else {
+					container.Status = "active"
 				}
 
-				//container.PingTime = pingTime
-
-				err = sendDataToFrontend(container)
+				err = updateContainerStatus(container)
 				if err != nil {
-					log.Printf("Failed to send data for container %s: %v", container.Ip, err)
+					log.Printf("Failed to update data for container %s: %v", container.Ip, err)
 				} else {
-					log.Printf("Successfully sent data for container %s", container.Ip)
+					log.Printf("Successfully updated status for container %s", container.Ip)
 				}
 			}
 		}

@@ -59,6 +59,26 @@ func (s *Storage) SaveContainer(container models.Container) error {
 	return nil
 }
 
+func (s *Storage) UpdateContainerStatus(container models.Container) error {
+	const op = "storage.UpdateContainerStatus"
+
+	stmt, err := s.DB.Prepare(`
+	UPDATE containers 
+	SET status = $1 
+	WHERE ip = $2
+	`)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	_, err = stmt.Exec(container.Status, container.Ip)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
 func (s *Storage) GetContainers() ([]models.Container, error) {
 	const op = "storage.GetContainers"
 
